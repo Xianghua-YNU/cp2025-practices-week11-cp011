@@ -70,7 +70,7 @@ def plot_integrands():
     plt.grid(True)
     plt.ylim(bottom=0)
     plt.xlim(left=0)
-    # plt.show()  # 在 main 函数末尾统一调用 plt.show()
+    plt.show()  # 在 main 函数末尾统一调用 plt.show()
 
 # --- Task 2 & 3: 解析推导 (在注释或报告中完成) ---
 
@@ -117,7 +117,7 @@ def gamma_function(a):
         else:
             # 原始形式在 [0,∞) 上积分
             integral_value, error = quad(integrand_gamma, 0, np.inf, args=(a,))
-        # print(f"Integration error estimate for a={a}: {error}")
+        print(f"Integration error estimate for a={a}: {error}")
         return integral_value
     except Exception as e:
         print(f"计算 Gamma({a}) 时发生错误: {e}")
@@ -162,4 +162,4 @@ if __name__ == "__main__":
             print(f"  相对误差 = {relative_error_int:.4e}")
 
     # --- 显示图像 ---
-    # plt.show()  # 取消注释以显示 Task 1 的图像
+    plt.show()  # 取消注释以显示 Task 1 的图像
