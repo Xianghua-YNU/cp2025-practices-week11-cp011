@@ -20,7 +20,13 @@ def integrand(x):
     float 或 numpy.ndarray：被积函数的值
     """
     # 在这里实现被积函数
-    pass
+    # 对于数组输入，逐个计算每个元素
+    if isinstance(x, np.ndarray):
+        return np.array([integrand(xi) for xi in x])
+    
+    # 对于单个值的计算
+    exp_x = np.exp(x)
+    return x**4 * exp_x / (exp_x - 1)**2
 
 def gauss_quadrature(f, a, b, n):
     """实现高斯-勒让德积分
@@ -37,7 +43,14 @@ def gauss_quadrature(f, a, b, n):
     float：积分结果
     """
     # 在这里实现高斯积分
-    pass
+    # 获取高斯-勒让德求积的节点和权重
+    x, w = np.polynomial.legendre.leggauss(n)
+    
+    # 将[-1,1]区间映射到[a,b]区间
+    t = 0.5 * (x + 1) * (b - a) + a
+    
+    # 计算积分
+    return 0.5 * (b - a) * np.sum(w * f(t))
 
 def cv(T):
     """计算给定温度T下的热容
@@ -50,12 +63,49 @@ def cv(T):
     float：热容值，单位：J/K
     """
     # 在这里实现热容计算
-    pass
+     # 计算积分上限
+    upper_limit = theta_D / T
+    
+    # 使用高斯积分计算
+    integral = gauss_quadrature(integrand, 0, upper_limit, 50)
+    
+    # 计算热容
+    return 9 * V * rho * kB * (T / theta_D)**3 * integral
 
 def plot_cv():
     """绘制热容随温度的变化曲线"""
     # 在这里实现绘图功能
-    pass
+     # 生成温度点（使用线性间距）
+    T = np.linspace(5, 500, 200)
+    
+    # 计算对应的热容值
+    C_V = np.array([cv(t) for t in T])
+    
+    # 创建图表
+    plt.figure(figsize=(10, 6))
+    
+    # 绘制热容曲线
+    plt.plot(T, C_V, 'b-', label='Debye Model')
+    
+    # 添加参考线
+    # 低温T^3行为
+    T_low = np.linspace(5, 50, 50)
+    C_low = cv(50) * (T_low/50)**3
+    plt.plot(T_low, C_low, 'r--', label='T³ Law')
+    
+    # Add labels and title
+    plt.xlabel('Temperature (K)')
+    plt.ylabel('Heat Capacity (J/K)')
+    plt.title('Solid Heat Capacity vs Temperature (Debye Model)')
+    
+    # Add grid
+    plt.grid(True, which='both', ls='-', alpha=0.2)
+    
+    # Add legend
+    plt.legend()
+    
+    # 显示图表
+    plt.show()
 
 def test_cv():
     """测试热容计算函数"""
